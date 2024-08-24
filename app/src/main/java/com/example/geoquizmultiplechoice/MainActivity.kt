@@ -53,8 +53,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQuestion() {
-        val questionTextResId = questionBank[currentIndex].textResId
-        binding.questionTextView.setText(questionTextResId)
+        if (currentIndex == -1) {
+            currentIndex = questionBank.size - 1
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.questionTextView.setText(questionTextResId)
+        } else {
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.questionTextView.setText(questionTextResId)
+        }
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
