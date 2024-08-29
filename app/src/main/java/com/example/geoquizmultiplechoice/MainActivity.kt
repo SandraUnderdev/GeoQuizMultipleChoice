@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.geoquizmultiplechoice.databinding.ActivityMainBinding
 
@@ -13,30 +14,19 @@ private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-
-    private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
-    )
-
-    private var currentIndex = 0
-    private var count = 0
-    private var answerList = mutableListOf<Int>()
-    private var score: Int? = null
+    private val quizViewModel: QuizViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // binding.btnTrue.setOnClickListener { view: View ->
-        binding.btnTrue.setOnClickListener { _: View ->
+        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
+
+        binding.btnTrue.setOnClickListener { view: View ->
             checkAnswer(true)
             trackQuestionsAnswered()
         }
@@ -47,34 +37,35 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.questionTextView.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
+           // currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
         }
 
         binding.btnNext.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
-            setVisibility()
+         //  currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
+            updateQuestion()
         }
 
         binding.btnPrev.setOnClickListener {
-            currentIndex = (currentIndex - 1) % questionBank.size
-            setVisibility()
+          //  currentIndex = (currentIndex - 1) % questionBank.size
+            quizViewModel.moveToPrev()
+            updateQuestion()
         }
 
         updateQuestion()
     }
 
     private fun updateQuestion() {
-        if (currentIndex == -1) {
-            // can't find tag
-            Log.d(TAG, "Current question index:  $currentIndex")
-//            try { val question = questionBank[currentIndex]
-//            } catch (ex: ArrayIndexOutOfBoundsException){ Log.e(TAG, "Sandra Index was out of bounds", ex) }
-            currentIndex = questionBank.size - 1
-            val questionTextResId = questionBank[currentIndex].textResId
+        if (quizViewModel.currentIndex == -1) {
+            quizViewModel.currentIndex = quizViewModel.questionBank.size - 1
+           // val questionTextResId = questionBank[currentIndex].textResId
+            val questionTextResId = quizViewModel.currentQuestionText
             binding.questionTextView.setText(questionTextResId)
         } else {
-            val questionTextResId = questionBank[currentIndex].textResId
+           // val questionTextResId = questionBank[currentIndex].textResId
+            val questionTextResId = quizViewModel.currentQuestionText
             binding.questionTextView.setText(questionTextResId)
         }
     }
@@ -86,7 +77,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
+//        val correctAnswer = questionBank[currentIndex].answer
+
+        val correctAnswer = quizViewModel.currentQuestionAnswer
 
         var messageResId = if (userAnswer == correctAnswer) {
             count++
@@ -95,25 +88,6 @@ class MainActivity : AppCompatActivity() {
             R.string.incorrect_toast
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-    }
-
-
-    private fun setVisibility() {
-        if (answerList.size == 6) {
-            binding.btnTrue.visibility = View.GONE
-            binding.btnFalse.visibility = View.GONE
-            score = (count * 100) / answerList.size
-            Toast.makeText(this, "All 6 Questions Completed", Toast.LENGTH_SHORT).show()
-            Toast.makeText(this, "Your score is $score %", Toast.LENGTH_SHORT).show()
-        } else if (currentIndex in answerList) {
-            binding.btnTrue.visibility = View.GONE
-            binding.btnFalse.visibility = View.GONE
-            updateQuestion()
-        } else {
-            binding.btnTrue.visibility = View.VISIBLE
-            binding.btnFalse.visibility = View.VISIBLE
-            updateQuestion()
-        }
     }
 
     override fun onStart() {
