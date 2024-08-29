@@ -1,6 +1,7 @@
 package com.example.geoquizmultiplechoice
 
 import android.os.Bundle
+
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.geoquizmultiplechoice.databinding.ActivityMainBinding
 
 private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -26,10 +28,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnTrue.setOnClickListener { view: View ->
             checkAnswer(true)
+            trackQuestionsAnswered()
         }
 
         binding.btnFalse.setOnClickListener { view: View ->
             checkAnswer(false)
+            trackQuestionsAnswered()
         }
 
         binding.questionTextView.setOnClickListener {
@@ -66,19 +70,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun trackQuestionsAnswered() {
+        if (currentIndex !in answerList) {
+            answerList.add(currentIndex)
+        }
+    }
+
     private fun checkAnswer(userAnswer: Boolean) {
 //        val correctAnswer = questionBank[currentIndex].answer
 
         val correctAnswer = quizViewModel.currentQuestionAnswer
 
         var messageResId = if (userAnswer == correctAnswer) {
+            count++
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
-
 
     override fun onStart() {
         super.onStart()
