@@ -1,6 +1,10 @@
 package com.example.geoquizmultiplechoice
 
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
@@ -8,6 +12,24 @@ private const val TAG = "QuizViewModel"
 const val CURRENT_INDEX_KEY = "CURRENT_INDEX_KEY"
 
 class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+
+    private var answerList = mutableListOf<Int>()
+    private var count = 0
+    private var isButtonVisible = true
+    private var score: Int? = null
+
+    private val _toastMessage = MutableLiveData<String>()
+    val toastMessage: LiveData<String> get() = _toastMessage
+
+    private val _scoreValue = MutableLiveData<String>()
+    val scoreValue: LiveData<String> get() = _scoreValue
+
+    private val _updateQuestion = MutableLiveData<Unit>()
+    val updateQuestion: LiveData<Unit> get() = _updateQuestion
+
+    private val _buttonVisibility = MutableLiveData<Boolean>()
+    val buttonVisibility: LiveData<Boolean> get() = _buttonVisibility
+
 
     // to understand view model life cycle
     init {
@@ -29,7 +51,6 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Question(R.string.question_asia, true)
     )
 
-    //  private var currentIndex = 0
 
     internal var currentIndex: Int
         get() = savedStateHandle.get(CURRENT_INDEX_KEY) ?: 0
@@ -46,7 +67,91 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     }
 
     fun moveToPrev() {
-        currentIndex = (currentIndex + 1) % questionBank.size
+        currentIndex = (currentIndex - 1) % questionBank.size
     }
+
+    fun trackQuestionsAnswered() {
+        if (currentIndex !in answerList) {
+            answerList.add(currentIndex)
+        }
+    }
+
+    fun setVisibility() {
+        val message: String
+        val showScore: String
+
+        if (answerList.size == 6) {
+            score = (count * 100) / answerList.size
+            message = "All 6 Questions Completed"
+            showScore = "Your score is $score %"
+            _toastMessage.value = message
+            _scoreValue.value = showScore
+            _buttonVisibility.value = false
+        } else if (currentIndex in answerList) {
+            _buttonVisibility.value = false
+            _updateQuestion.value = Unit
+
+        } else {
+            _buttonVisibility.value = true
+            _updateQuestion.value = Unit
+        }
+    }
+
+//     fun setVisibility() {
+//        if (answerList.size == 6) {
+//            isButtonVisible = false
+//            score = (count * 100) / answerList.size
+//            Toast.makeText(this, "All 6 Questions Completed", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, "Your score is $score %", Toast.LENGTH_SHORT).show()
+//        } else if (currentIndex in answerList) {
+//            isButtonVisible = false
+//            updateQuestion()
+//        } else {
+//            isButtonVisible = true
+//            updateQuestion()
+//        }
+//    }
+
+    fun updateCorrectCount(correctAnswer: Boolean) {
+        if (correctAnswer) {
+            count++
+        }
+    }
+
+
+//     fun setVisibilitye() {
+//         val trackValue = 6
+//        if (answerList.size == trackValue) {
+//            isButtonVisible = false
+//        } else if (currentIndex in answerList) {
+//            isButtonVisible = false
+//
+//        } else {
+//            isButtonVisible = true
+//        }
+//    }
+
+//    fun trackQuestionsAnswered() {
+//        if (currentIndex !in answerList) {
+//            answerList.add(currentIndex)
+//        }
+//    }
+//
+//    fun updateCorrectCount(correctAnswer: Boolean) {
+//        if (correctAnswer) {
+//            count++
+//        }
+//    }
+//
+//     fun setVisibility() {
+//        if (answerList.size == 6) {
+//            isButtonVisible = false
+//        } else if (currentIndex in answerList) {
+//            isButtonVisible = false
+//
+//        } else {
+//            isButtonVisible = true
+//        }
+//    }
 }
 

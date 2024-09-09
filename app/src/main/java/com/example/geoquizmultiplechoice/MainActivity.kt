@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.geoquizmultiplechoice.databinding.ActivityMainBinding
 
 private const val TAG = "MainActivity"
@@ -16,73 +17,85 @@ class MainActivity : AppCompatActivity() {
 
     private val quizViewModel: QuizViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
-
-        binding.btnTrue.setOnClickListener { view: View ->
+        binding.btnTrue.setOnClickListener { _: View ->
             checkAnswer(true)
-            trackQuestionsAnswered()
+            quizViewModel.trackQuestionsAnswered()
         }
 
         binding.btnFalse.setOnClickListener { view: View ->
             checkAnswer(false)
-            trackQuestionsAnswered()
+            quizViewModel.trackQuestionsAnswered()
         }
 
         binding.questionTextView.setOnClickListener {
-           // currentIndex = (currentIndex + 1) % questionBank.size
             quizViewModel.moveToNext()
+            quizViewModel.setVisibility()
             updateQuestion()
         }
 
         binding.btnNext.setOnClickListener {
-         //  currentIndex = (currentIndex + 1) % questionBank.size
             quizViewModel.moveToNext()
+            quizViewModel.setVisibility()
             updateQuestion()
+
         }
 
         binding.btnPrev.setOnClickListener {
-          //  currentIndex = (currentIndex - 1) % questionBank.size
             quizViewModel.moveToPrev()
+            quizViewModel.setVisibility() //setVisibility().
             updateQuestion()
+
         }
 
         updateQuestion()
+
+        quizViewModel.toastMessage.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+
+            }
+        })
+
+        quizViewModel.scoreValue.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+
+            }
+        })
+
+        quizViewModel.updateQuestion.observe(this, Observer {
+            updateQuestion()
+        })
+
+        quizViewModel.buttonVisibility.observe(this, Observer { isVisibility ->
+            binding.btnTrue.visibility = if (isVisibility) View.VISIBLE else View.GONE
+            binding.btnFalse.visibility = if (isVisibility) View.VISIBLE else View.GONE
+        })
     }
+
 
     private fun updateQuestion() {
         if (quizViewModel.currentIndex == -1) {
             quizViewModel.currentIndex = quizViewModel.questionBank.size - 1
-           // val questionTextResId = questionBank[currentIndex].textResId
             val questionTextResId = quizViewModel.currentQuestionText
             binding.questionTextView.setText(questionTextResId)
         } else {
-           // val questionTextResId = questionBank[currentIndex].textResId
             val questionTextResId = quizViewModel.currentQuestionText
             binding.questionTextView.setText(questionTextResId)
-        }
-    }
-
-    private fun trackQuestionsAnswered() {
-        if (currentIndex !in answerList) {
-            answerList.add(currentIndex)
         }
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-//        val correctAnswer = questionBank[currentIndex].answer
-
         val correctAnswer = quizViewModel.currentQuestionAnswer
-
-        var messageResId = if (userAnswer == correctAnswer) {
-            count++
+        val isCorrectAnswer = userAnswer == correctAnswer
+        quizViewModel.updateCorrectCount(isCorrectAnswer)
+        var messageResId = if (isCorrectAnswer) {
             R.string.correct_toast
         } else {
             R.string.incorrect_toast
@@ -110,7 +123,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onStop() called")
     }
 
-    //not called
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() called")
