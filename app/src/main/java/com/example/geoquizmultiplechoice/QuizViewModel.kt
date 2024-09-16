@@ -28,13 +28,11 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     private val _buttonVisibility = MutableLiveData<Boolean>()
     val buttonVisibility: LiveData<Boolean> get() = _buttonVisibility
 
-
     // to understand view model life cycle
     init {
         Log.d(TAG, "viewModel instance created")
     }
 
-    //  to understand view model life cycle
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "viewModel instance about to be destroyed")
@@ -94,7 +92,6 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
             _updateQuestion.value = Unit
         }
     }
-
 
     fun updateCorrectCount(correctAnswer: Boolean) {
         if (correctAnswer) {
