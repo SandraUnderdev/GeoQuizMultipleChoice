@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import java.lang.Exception
 
 private const val TAG = "QuizViewModel"
 const val CURRENT_INDEX_KEY = "CURRENT_INDEX_KEY"
@@ -63,10 +64,14 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         get() = questionBank[currentIndex].textResId
 
     fun moveToNext() {
+        // logging stack traces , first liner -where you logged, second line - should show the cause
+        Log.d(TAG, "updating question text", Exception())
         currentIndex = (currentIndex + 1) % questionBank.size
     }
 
     fun moveToPrev() {
+        //comment and set break point
+        //  currentIndex = (currentIndex - 1) % questionBank.size
         currentIndex = (currentIndex - 1) % questionBank.size
     }
 
@@ -96,62 +101,14 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
             _updateQuestion.value = Unit
         }
     }
-
-//     fun setVisibility() {
-//        if (answerList.size == 6) {
-//            isButtonVisible = false
-//            score = (count * 100) / answerList.size
-//            Toast.makeText(this, "All 6 Questions Completed", Toast.LENGTH_SHORT).show()
-//            Toast.makeText(this, "Your score is $score %", Toast.LENGTH_SHORT).show()
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//            updateQuestion()
-//        } else {
-//            isButtonVisible = true
-//            updateQuestion()
-//        }
-//    }
-
     fun updateCorrectCount(correctAnswer: Boolean) {
         if (correctAnswer) {
             count++
         }
     }
+    // check for lint
+    // change  android:gravity="center" to left
+    // click anayze, whole project
 
-
-//     fun setVisibilitye() {
-//         val trackValue = 6
-//        if (answerList.size == trackValue) {
-//            isButtonVisible = false
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//
-//        } else {
-//            isButtonVisible = true
-//        }
-//    }
-
-//    fun trackQuestionsAnswered() {
-//        if (currentIndex !in answerList) {
-//            answerList.add(currentIndex)
-//        }
-//    }
-//
-//    fun updateCorrectCount(correctAnswer: Boolean) {
-//        if (correctAnswer) {
-//            count++
-//        }
-//    }
-//
-//     fun setVisibility() {
-//        if (answerList.size == 6) {
-//            isButtonVisible = false
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//
-//        } else {
-//            isButtonVisible = true
-//        }
-//    }
 }
 
