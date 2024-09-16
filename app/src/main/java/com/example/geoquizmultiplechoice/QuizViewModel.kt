@@ -1,8 +1,6 @@
 package com.example.geoquizmultiplechoice
 
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -43,12 +41,12 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     }
 
     internal val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
+            Question(R.string.question_australia, true),
+            Question(R.string.question_oceans, true),
+            Question(R.string.question_mideast, false),
+            Question(R.string.question_africa, false),
+            Question(R.string.question_americas, true),
+            Question(R.string.question_asia, true)
     )
 
 
@@ -97,61 +95,11 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         }
     }
 
-//     fun setVisibility() {
-//        if (answerList.size == 6) {
-//            isButtonVisible = false
-//            score = (count * 100) / answerList.size
-//            Toast.makeText(this, "All 6 Questions Completed", Toast.LENGTH_SHORT).show()
-//            Toast.makeText(this, "Your score is $score %", Toast.LENGTH_SHORT).show()
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//            updateQuestion()
-//        } else {
-//            isButtonVisible = true
-//            updateQuestion()
-//        }
-//    }
 
     fun updateCorrectCount(correctAnswer: Boolean) {
         if (correctAnswer) {
             count++
         }
     }
-
-
-//     fun setVisibilitye() {
-//         val trackValue = 6
-//        if (answerList.size == trackValue) {
-//            isButtonVisible = false
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//
-//        } else {
-//            isButtonVisible = true
-//        }
-//    }
-
-//    fun trackQuestionsAnswered() {
-//        if (currentIndex !in answerList) {
-//            answerList.add(currentIndex)
-//        }
-//    }
-//
-//    fun updateCorrectCount(correctAnswer: Boolean) {
-//        if (correctAnswer) {
-//            count++
-//        }
-//    }
-//
-//     fun setVisibility() {
-//        if (answerList.size == 6) {
-//            isButtonVisible = false
-//        } else if (currentIndex in answerList) {
-//            isButtonVisible = false
-//
-//        } else {
-//            isButtonVisible = true
-//        }
-//    }
 }
 
