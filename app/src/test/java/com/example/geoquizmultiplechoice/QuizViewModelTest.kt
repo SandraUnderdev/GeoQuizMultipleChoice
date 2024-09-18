@@ -1,8 +1,9 @@
 package com.example.geoquizmultiplechoice
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class QuizViewModelTest {
@@ -22,4 +23,20 @@ class QuizViewModelTest {
         assertEquals(R.string.question_australia, quizViewModel.currentQuestionText)
     }
 
+    @Test
+    fun QuestionAnswerTrueorFalse() {
+        val savedStateHandle = SavedStateHandle()
+        val quizViewModel = QuizViewModel(savedStateHandle)
+        assertTrue(true.toString(), quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        assertTrue(true.toString(), quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        assertFalse(false.toString(), quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        assertFalse(false.toString(), quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        assertTrue(true.toString(), quizViewModel.currentQuestionAnswer)
+        quizViewModel.moveToNext()
+        assertTrue(true.toString(), quizViewModel.currentQuestionAnswer)
+    }
 }
