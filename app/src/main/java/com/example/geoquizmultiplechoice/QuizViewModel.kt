@@ -28,9 +28,11 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     val buttonVisibility: LiveData<Boolean> get() = _buttonVisibility
 
     // to understand view model life cycle
+
 //    init {
 //        Log.d(TAG, "viewModel instance created")
 //    }
+
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "viewModel instance about to be destroyed")
