@@ -13,7 +13,6 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
 
     private var answerList = mutableListOf<Int>()
     private var count = 0
-    private var isButtonVisible = true
     private var score: Int? = null
 
     private val _toastMessage = MutableLiveData<String>()
@@ -29,9 +28,10 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
     val buttonVisibility: LiveData<Boolean> get() = _buttonVisibility
 
     // to understand view model life cycle
-    init {
-        Log.d(TAG, "viewModel instance created")
-    }
+
+//    init {
+//        Log.d(TAG, "viewModel instance created")
+//    }
 
     override fun onCleared() {
         super.onCleared()
